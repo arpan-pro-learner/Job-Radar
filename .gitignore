@@ -14,9 +14,10 @@ dist/
 .env.local
 .env.*.local
 
-# Database files
+# Database & Scratch files
 *.sqlite
 *.db
+backend/*_data*.json
 
 # OS files
 .DS_Store
