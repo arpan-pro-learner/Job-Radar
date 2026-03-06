@@ -12,7 +12,7 @@ export function Footer() {
                 <Radar className="h-4 w-4 text-white" />
               </div>
               <span className="font-bold text-lg tracking-tight text-white">
-                Founder Radar
+                Job Radar
               </span>
             </Link>
             <p className="text-muted-foreground max-w-sm leading-relaxed text-sm">
@@ -47,7 +47,7 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Founder Radar. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Job Radar. All rights reserved.</p>
           <div className="flex gap-6">
             <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>

@@ -41,7 +41,7 @@ export function Navbar() {
             <Radar className="h-5 w-5 text-white" />
           </div>
           <span className="font-bold text-xl tracking-tight text-white group-hover:text-primary transition-colors">
-            Founder Radar
+            Job Radar
           </span>
         </Link>
 

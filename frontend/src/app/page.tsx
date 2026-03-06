@@ -225,7 +225,7 @@ export default async function Home({
                 Ready to find your next mission?
             </h2>
             <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-                Join 5,000+ engineers who use Founder Radar to discover the most exciting early-stage startups.
+                Join 5,000+ engineers who use Job Radar to discover the most exciting early-stage startups.
             </p>
             <Button size="lg" className="rounded-full px-8 h-14 text-lg shadow-xl shadow-primary/20 hover:scale-105 transition-transform duration-300">
                 Start Discovering Free

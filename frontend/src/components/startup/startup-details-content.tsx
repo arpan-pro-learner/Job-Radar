@@ -171,7 +171,7 @@ export function StartupDetailsContent({ startup }: StartupDetailsContentProps) {
                 
                 {/* Scores Card */}
                 <div className="bg-secondary/10 border border-white/5 rounded-2xl p-6 backdrop-blur-sm">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Founder Radar Signals</h3>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Job Radar Signals</h3>
                     <div className="space-y-4">
                         <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/30 border border-white/5">
                             <div className="flex items-center gap-3">

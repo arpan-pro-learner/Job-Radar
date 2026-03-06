@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Founder Radar | Discover High-Growth Startups",
+  title: "Job Radar | Discover High-Growth Startups",
   description: "Find verified early-stage startups with high hiring signals and remote-first culture before they hit job boards.",
 };
 
