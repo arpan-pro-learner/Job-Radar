@@ -70,14 +70,14 @@ export function StartupCard({ startup }: StartupCardProps) {
                    <Badge variant="outline" className="text-[10px] h-5 px-1.5 border-white/10 text-muted-foreground shrink-0">{startup.location}</Badge>
                 )}
               </div>
-              <p className="text-growth font-bold text-sm mb-1 line-clamp-1 flex items-center gap-2">
+              <div className="text-growth font-bold text-sm mb-1 line-clamp-1 flex items-center gap-2">
                 {startup.jobTitle || "Remote Opportunity"}
                 {startup.source && (
                    <Badge variant="outline" className="text-[9px] h-4 px-1 border-primary/20 text-primary/60 font-normal">
                     via {startup.source}
                   </Badge>
                 )}
-              </p>
+              </div>
               <CardDescription className="line-clamp-2 text-xs text-muted-foreground leading-relaxed">
                 {startup.shortDescription || "No description available."}
               </CardDescription>
@@ -109,21 +109,21 @@ export function StartupCard({ startup }: StartupCardProps) {
             <span className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Hiring</span>
             <div className="flex items-center gap-1.5">
               <Users className="h-3.5 w-3.5 text-growth" />
-              <span className="font-bold text-growth">{startup.hiringScore}%</span>
+              <span className="font-bold text-growth">{startup.hiringScore > 0 ? `${startup.hiringScore}%` : "N/A"}</span>
             </div>
           </div>
           <div className="flex flex-col items-center p-2 rounded-lg bg-white/5 border border-white/5 group-hover:border-blue-500/20 transition-colors">
             <span className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Remote</span>
             <div className="flex items-center gap-1.5">
                <Rocket className="h-3.5 w-3.5 text-blue-400" />
-              <span className="font-bold text-blue-100">{startup.remoteScore}%</span>
+              <span className="font-bold text-blue-100">{startup.remoteScore > 0 ? `${startup.remoteScore}%` : "N/A"}</span>
             </div>
           </div>
           <div className="flex flex-col items-center p-2 rounded-lg bg-white/5 border border-white/5 group-hover:border-star/20 transition-colors">
             <span className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Growth</span>
              <div className="flex items-center gap-1.5">
               <Zap className="h-3.5 w-3.5 text-star" />
-              <span className="font-bold text-star">{startup.growthScore}%</span>
+              <span className="font-bold text-star">{startup.growthScore > 0 ? `${startup.growthScore}%` : "N/A"}</span>
             </div>
           </div>
         </div>
@@ -150,7 +150,7 @@ export function StartupCard({ startup }: StartupCardProps) {
       <CardFooter className="pt-0 relative z-10 flex gap-2">
         <Link href={`/startups/${startup.id}`} className="flex-1">
           <Button variant="outline" className="w-full bg-secondary/20 hover:bg-secondary/40 text-secondary-foreground font-medium border-white/5 transition-all duration-300">
-            Analysis
+            View Details
           </Button>
         </Link>
         {applyUrl && (

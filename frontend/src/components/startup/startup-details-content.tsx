@@ -91,7 +91,7 @@ export function StartupDetailsContent({ startup }: StartupDetailsContentProps) {
                                     )}
                                 </h1>
                                 <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
-                                    {startup.shortDescription}
+                                    {startup.jobTitle || "Software Engineer"}
                                 </p>
                                 
                                 <div className="flex flex-wrap gap-4 mt-5">
@@ -123,11 +123,14 @@ export function StartupDetailsContent({ startup }: StartupDetailsContentProps) {
                 <div>
                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">About {startup.name}</h2>
                    <div className="prose prose-invert prose-lg text-muted-foreground/90 leading-relaxed max-w-none">
-                     <p>{startup.fullDescription || startup.shortDescription}</p>
-                     <p>
-                        They are tackling significant challenges in the <span className="text-white font-medium">{startup.industry}</span> space. 
-                        The team is currently <span className="text-white font-medium">{startup.teamSize} employees</span> and has raised <span className="text-white font-medium">{startup.funding}</span> from top-tier investors.
-                     </p>
+                     <p className="whitespace-pre-line">{startup.fullDescription || startup.shortDescription}</p>
+                     {(startup.industry || startup.teamSize || startup.funding) && (
+                         <p>
+                            {startup.industry && <>They are tackling significant challenges in the <span className="text-white font-medium">{startup.industry}</span> space. </>}
+                            {startup.teamSize && <>The team is currently <span className="text-white font-medium">{startup.teamSize} employees</span> </>}
+                            {startup.funding && <>and has raised <span className="text-white font-medium">{startup.funding}</span> from top-tier investors.</>}
+                         </p>
+                     )}
                    </div>
                 </div>
 

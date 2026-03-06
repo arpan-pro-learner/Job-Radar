@@ -6,6 +6,42 @@ import { CreateStartupDto } from '../../startups/dto/create-startup.dto';
 export class HnHiringScraper extends BaseScraper {
   private readonly url = 'https://hnhiring.com/locations/remote';
 
+  private async deepScrapeAtsLink(url: string, fallbackText: string): Promise<string> {
+    try {
+      this.logger.log(`Deep scraping ATS link: ${url}`);
+      const { data } = await axios.get(url, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        },
+        timeout: 10000,
+      });
+      const $ = cheerio.load(data);
+      let extractedText = '';
+
+      if (url.includes('greenhouse.io') || url.includes('boards.greenhouse.io')) {
+        extractedText = $('#content').text() || $('.job-description').text() || $('div[id="content"]').text();
+      } else if (url.includes('lever.co')) {
+        extractedText = $('.posting-page').text() || $('.section').text() || $('.posting-requirements').text();
+      } else if (url.includes('workable.com')) {
+        extractedText = $('[data-ui="job-description"]').text() || $('.job-description').text();
+      } else if (url.includes('ashbyhq.com')) {
+        extractedText = $('.job-posting-content').text() || $('.ashby-job-description').text() || $('div[class*="JobPosting"]').text();
+      } else {
+        // Generic fallback
+        extractedText = $('main').text() || $('article').text() || $('body').text();
+      }
+
+      if (extractedText) {
+        extractedText = extractedText.replace(/\s+/g, ' ').trim();
+        return extractedText.length > 5000 ? extractedText.substring(0, 5000) + '...' : extractedText;
+      }
+    } catch (error) {
+      this.logger.warn(`Failed to deep scrape ${url}: ${error.message}`);
+    }
+    return fallbackText;
+  }
+
   async scrape(): Promise<CreateStartupDto[]> {
     this.logger.log(`Fetching jobs from ${this.url}...`);
 
@@ -18,17 +54,31 @@ export class HnHiringScraper extends BaseScraper {
       });
       const $ = cheerio.load(data);
       const jobs: CreateStartupDto[] = [];
+      const elements = $('li').toArray();
 
-      $('li').each((i, el) => {
-        const text = $(el).text();
+      for (const el of elements) {
+        const fullText = $(el).text();
+        
         // Skip items that don't look like job postings
-        if (!text.includes('|')) return;
+        if (!fullText.includes('|')) continue;
+        
+        const lowerText = fullText.toLowerCase();
+        
+        // Ensure it's an engineering role and remote (user specified preference)
+        const isEngineering = lowerText.includes('engineer') || lowerText.includes('developer') || lowerText.includes('software');
+        const isRemote = lowerText.includes('remote');
+        if (!isEngineering || !isRemote) continue;
 
-        const parts = text.split('|').map(p => p.trim());
-        if (parts.length < 2) return;
+        const parts = fullText.split('|').map(p => p.trim());
+        if (parts.length < 2) continue;
 
         // Extracting name: usually [User] [Time] [Company Name]
         let name = parts[0];
+        
+        // Strip out the HN exact timestamp format (e.g. usernameYYYY-MM-DDCompany Name)
+        name = name.replace(/^[a-zA-Z0-9_-]+\d{4}-\d{2}-\d{2}/, '').trim();
+        
+        // Secondary pass for older formats
         const nameMatch = name.match(/ago\s*(.*)$/) || name.match(/\d{4}-\d{2}-\d{2}\s*(.*)$/) || name.match(/]\s*(.*)$/);
         name = nameMatch ? nameMatch[1].trim() : name;
 
@@ -39,7 +89,18 @@ export class HnHiringScraper extends BaseScraper {
         }
 
         const role = parts[1] || 'Software Engineer';
-        const locationInfo = parts[2] || 'Remote';
+        let locationInfo = parts[2] || 'Remote';
+        
+        // Clean up location info if it's too long (overflows cards)
+        if (locationInfo.length > 35) {
+            const places = locationInfo.split(',').map(p => p.trim());
+            // If it's a list of cities, just take the first one or two and add "... "
+            if (places.length > 2) {
+                locationInfo = `${places[0]}, ${places[1]}...`;
+            } else {
+               locationInfo = locationInfo.substring(0, 32) + '...';
+            }
+        }
         
         // Find links
         const links = $(el).find('a').map((_, a) => $(a).attr('href')).get();
@@ -63,16 +124,25 @@ export class HnHiringScraper extends BaseScraper {
         const websiteUrl = links.find(l => l.includes('http') && !l.includes('news.ycombinator.com') && l !== careersUrl) || careersUrl;
 
         if (name && name.length < 50 && name.length > 1) {
+          
+          let shortDescription = fullText.substring(0, 300) + '...';
+          
+          // Deep scrape if it's an ATS link to get richer AI context
+          if (careersUrl && (careersUrl.includes('greenhouse') || careersUrl.includes('lever') || careersUrl.includes('ashby') || careersUrl.includes('workable'))) {
+             shortDescription = await this.deepScrapeAtsLink(careersUrl, shortDescription);
+          }
+
           const startup: CreateStartupDto = {
             name: name,
             websiteUrl: websiteUrl || '',
             careersUrl: careersUrl || '',
-            shortDescription: text.substring(0, 300) + '...', // Full text for AI context
+            shortDescription: shortDescription,
             industry: 'Tech',
             location: locationInfo.split('|')[0].trim(),
             hiringScore: 0,
             growthScore: 0,
             remoteScore: 0,
+            jobTitle: role,
             aiSummary: `Position: ${role}. Location: ${locationInfo}`,
             batch: 'HN-Remote',
             source: 'HN Hiring'
@@ -80,8 +150,11 @@ export class HnHiringScraper extends BaseScraper {
 
           const scored = this.generateScores(startup) as CreateStartupDto;
           jobs.push(scored);
+          
+          // Prevent spamming the ATS sites too quickly
+          await new Promise(resolve => setTimeout(resolve, 500));
         }
-      });
+      }
 
       this.logger.log(`Found ${jobs.length} valid jobs from HN.`);
       return jobs;

@@ -6,6 +6,7 @@ import { SlidersHorizontal, ArrowRight, TrendingUp, Globe, Zap, Sparkles } from 
 import { MOCK_STARTUPS } from "@/lib/mock-data";
 import { SearchBar } from "@/components/startup/search-bar";
 import { Pagination } from "@/components/startup/pagination";
+import { RefreshButton } from "@/components/startup/refresh-button";
 import Link from "next/link";
 
 async function getStartups(page: number = 1, search: string = "", source: string = "") {
@@ -188,6 +189,7 @@ export default async function Home({
             </div>
           </div>
            <div className="flex gap-3">
+             <RefreshButton />
              <Button variant="outline" className="gap-2 border-white/10 hover:bg-white/5">
                 Saved <div className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded-sm">0</div>
              </Button>
