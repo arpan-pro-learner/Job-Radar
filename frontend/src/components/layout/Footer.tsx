@@ -19,9 +19,9 @@ export function Footer() {
               Helping developers discover and connect with high-growth, remote-first startups before they hit mainstream job boards.
             </p>
             <div className="flex gap-4 pt-2">
-                <SocialLink href="#" icon={<Twitter className="h-4 w-4" />} />
-                <SocialLink href="#" icon={<Github className="h-4 w-4" />} />
-                <SocialLink href="#" icon={<Linkedin className="h-4 w-4" />} />
+                <SocialLink href="https://x.com/webdev_arpan" icon={<Twitter className="h-4 w-4" />} />
+                <SocialLink href="https://github.com/arpan-pro-learner" icon={<Github className="h-4 w-4" />} />
+                <SocialLink href="https://www.linkedin.com/in/webdevarpan/" icon={<Linkedin className="h-4 w-4" />} />
             </div>
           </div>
 
