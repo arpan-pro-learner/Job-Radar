@@ -94,9 +94,7 @@ To maintain a high-quality, fresh pipeline of leads, the NestJS backend operates
 2. **Regex Sanitation**: Raw strings are aggressively parsed using Regex to isolate real company names and clean descriptions from forum artifacts (like usernames and timestamps).
 3. **Async Upstream**: The ingestion process runs asynchronously. The frontend can trigger a refresh via `/ingestion/trigger` (returning a `202 Accepted`) while the backend safely processes and scores hundreds of leads in the background without causing HTTP timeouts.
 
-```
 
----
 
 ## 📸 Gallery
 
