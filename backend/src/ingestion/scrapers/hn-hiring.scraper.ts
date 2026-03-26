@@ -73,14 +73,27 @@ export class HnHiringScraper extends BaseScraper {
         if (parts.length < 2) continue;
 
         // Extracting name: usually [User] [Time] [Company Name]
-        let name = parts[0];
+        let name = parts[0] || '';
         
-        // Strip out the HN exact timestamp format (e.g. usernameYYYY-MM-DDCompany Name)
-        name = name.replace(/^[a-zA-Z0-9_-]+\d{4}-\d{2}-\d{2}/, '').trim();
+        // Strip out the HN exact timestamp format or "2 hours ago" prefixes
+        name = name.replace(/^[a-zA-Z0-9_-]+\d{4}-\d{2}-\d{2}\s*/, '').trim();
+        name = name.replace(/^[a-zA-Z0-9_-]+\s+\d+\s+(hours?|days?|minutes?|months?)\s+ago\s*/i, '').trim();
         
         // Secondary pass for older formats
         const nameMatch = name.match(/ago\s*(.*)$/) || name.match(/\d{4}-\d{2}-\d{2}\s*(.*)$/) || name.match(/]\s*(.*)$/);
         name = nameMatch ? nameMatch[1].trim() : name;
+
+        // If the title is still just a URL (as reported by Subagent), extract the domain name
+        if (name.includes('http')) {
+            try {
+                const urlMatch = name.match(/https?:\/\/[^\s]+/);
+                if (urlMatch) {
+                   const urlObj = new URL(urlMatch[0]);
+                   name = urlObj.hostname.replace('www.', '').split('.')[0];
+                   name = name.charAt(0).toUpperCase() + name.slice(1);
+                }
+            } catch (e) {}
+        }
 
         // Clean name if it's too long
         if (name.length > 50) {
@@ -125,7 +138,9 @@ export class HnHiringScraper extends BaseScraper {
 
         if (name && name.length < 50 && name.length > 1) {
           
-          let shortDescription = fullText.substring(0, 300) + '...';
+          let cleanText = fullText.replace(/^[a-zA-Z0-9_-]+\d{4}-\d{2}-\d{2}\s*/, '')
+                                  .replace(/^[a-zA-Z0-9_-]+\s+\d+\s+(hours?|days?|minutes?|months?)\s+ago\s*/i, '');
+          let shortDescription = cleanText.substring(0, 300) + '...';
           
           // Deep scrape if it's an ATS link to get richer AI context
           if (careersUrl && (careersUrl.includes('greenhouse') || careersUrl.includes('lever') || careersUrl.includes('ashby') || careersUrl.includes('workable'))) {

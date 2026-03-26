@@ -30,8 +30,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link href="/#discover" className="hover:text-primary transition-colors">Startups</Link></li>
               <li><Link href="/#how-it-works" className="hover:text-primary transition-colors">How it Works</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">For Founders</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Pricing</Link></li>
+              <li><a href="https://github.com/arpan-pro-learner" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">GitHub</a></li>
             </ul>
           </div>
 
@@ -39,8 +38,6 @@ export function Footer() {
             <h4 className="font-semibold text-white mb-6">Company</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link href="#" className="hover:text-primary transition-colors">About Us</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Careers</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Blog</Link></li>
               <li><Link href="#" className="hover:text-primary transition-colors">Contact</Link></li>
             </ul>
           </div>

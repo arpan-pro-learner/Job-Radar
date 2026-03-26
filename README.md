@@ -88,18 +88,54 @@ Plus a human-readable `aiSummary` and an `outreachAngle` to give you a head star
   Search, filter, sort & display jobs
 ```
 
+### 🕸️ Autonomous Scraper Engine
+To maintain a high-quality, fresh pipeline of leads, the NestJS backend operates a dedicated **Ingestion Engine**:
+1. **Source Adapters**: Custom scraper classes use `axios` and `cheerio` to extract raw HTML from dynamic sources like the *Hacker News "Who is hiring"* threads and various Reddit communities.
+2. **Regex Sanitation**: Raw strings are aggressively parsed using Regex to isolate real company names and clean descriptions from forum artifacts (like usernames and timestamps).
+3. **Async Upstream**: The ingestion process runs asynchronously. The frontend can trigger a refresh via `/ingestion/trigger` (returning a `202 Accepted`) while the backend safely processes and scores hundreds of leads in the background without causing HTTP timeouts.
+
+```
+
 ---
 
-## 🗺️ Future Roadmap
+## 📸 Gallery
 
-Here's what's coming next:
+### 1. Discovery Feed
+A dense, recruiter-friendly horizontal layout inspired by top-tier professional tools, featuring AI-generated hiring, remote, and growth scores.
 
-- [ ] 🔘 **One-click "Refresh Jobs"** button on the frontend to trigger a new scrape run on demand
-- [ ] 🔎 **Advanced Filters** — filter by industry, location, experience level, and tech stack
-- [ ] 🌐 **More Scraper Sources** — research and add scraping for new high-signal job boards
-- [ ] 🔗 **Direct ATS Apply Links** — refine scrapers to extract exact application URLs instead of company homepages
-- [ ] 🏢 **Company Logos & Metadata** — make job cards richer with logos and salary range hints
-- [ ] ⚡ **Incremental Updates & Caching** — keep the DB fresh without full re-ingestion cycles
+![Discovery Feed](assets/discovery_page.png)
+
+### 2. Startup Deep Dive
+Clean, focused details page prioritizing data-density, AI outreach angles, and immediate conversion (Apply Now).
+
+![Startup Details](assets/startup_details_page.png)
+
+---
+
+## 🚀 Deployment Strategy
+
+For recruiters to view this project live:
+1. **Database Migration**: Switch from local SQLite to a serverless PostgreSQL instance (e.g., Supabase or Neon DB).
+2. **Backend (NestJS)**: Deploy to **Render** or **Railway** (free tiers) to support the long-running web scraping workers. Ensure `GEMINI_API_KEY` is set in the environment variables.
+3. **Frontend (Next.js)**: Deploy to **Vercel** for optimal Edge Network caching and global performance, linking the `NEXT_PUBLIC_API_URL` to the live backend URL.
+
+---
+
+## 🗺️ Roadmap & Completed Features
+
+We are actively checking features off the roadmap. Here is what has been accomplished and what's next:
+
+### ✅ Completed
+- [x] 🔘 **One-click "Refresh Jobs"** — Interactive UI button that triggers an asynchronous backend scrape.
+- [x] 🔗 **Direct Application Links** — Detailed scraper logic to pull direct Careers/ATS URLs instead of generic homepages.
+- [x] 🌍 **Global / India Remote Filtration** — Dedicated UI toggle to find non-US remote opportunities.
+- [x] 🤖 **AI Outreach Angles** — Automated generation of personalized cold-outreach templates for founders.
+
+### 🔜 Coming Next
+- [ ] 🔎 **Advanced Filters** — filter by specific industries, experience levels, and specific tech stacks.
+- [ ] 🌐 **More Scraper Sources** — research and add scraping for Greenhouse/Lever direct feeds.
+- [ ] 🏢 **Company Logos Automation** — implement Clearbit or Brandfetch APIs to automatically pull rich company logos.
+- [ ] ⚡ **Incremental Updates & Caching** — keep the DB fresh without full re-ingestion cycles.
 
 ---
 

@@ -16,8 +16,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Job Radar | Discover High-Growth Startups",
-  description: "Find verified early-stage startups with high hiring signals and remote-first culture before they hit job boards.",
+  title: "Job Radar | AI-Powered Startup Job Discovery",
+  description: "Stop guessing. We use AI to find early-stage startups with high hiring probability and remote-first DNA. Discover your next unicorn role before the crowd.",
+  keywords: ["startup jobs", "remote developer jobs", "software engineering jobs", "tech startups"],
+  metadataBase: new URL('https://jobradar.dev'),
+  openGraph: {
+    title: "Job Radar - Discover Early-Stage Startup Jobs",
+    description: "AI-powered job discovery tool for developers to find high-growth remote startup jobs.",
+    url: "/",
+    siteName: "Job Radar",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Job Radar | Remote Startup Jobs",
+    description: "Discover early-stage startup jobs with high hiring probability.",
+  },
 };
 
 export default function RootLayout({

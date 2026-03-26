@@ -22,7 +22,7 @@ export function RefreshButton() {
         console.error("Failed to trigger data refresh");
         alert("Failed to refresh data. Ensure backend is running.");
       } else {
-        // Refresh the page data
+        alert("Scraping started! This process takes a few minutes as the AI analyzes each job. Check back soon!");
         router.refresh(); 
       }
     } catch (error) {

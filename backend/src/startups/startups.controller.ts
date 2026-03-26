@@ -18,8 +18,9 @@ export class StartupsController {
     @Query('limit') limit?: number,
     @Query('search') search?: string,
     @Query('source') source?: string,
+    @Query('locationFilter') locationFilter?: string,
   ) {
-    return this.startupsService.findAll({ page, limit, search, source });
+    return this.startupsService.findAll({ page, limit, search, source, locationFilter });
   }
 
   @Get(':id')

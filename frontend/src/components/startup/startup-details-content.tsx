@@ -69,9 +69,7 @@ export function StartupDetailsContent({ startup }: StartupDetailsContentProps) {
             <div className="lg:col-span-2 space-y-8">
                 
                 {/* Header Card */}
-                <div className="bg-secondary/20 border border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-32 bg-primary/5 blur-[80px] rounded-full pointer-events-none"></div>
-                    
+                <div className="bg-card/40 border border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-md relative overflow-hidden">
                     <div className="flex flex-col md:flex-row gap-6 justify-between items-start relative z-10">
                         <div className="flex gap-5">
                             <div className="h-20 w-20 md:h-24 md:w-24 rounded-2xl bg-background border border-white/10 flex items-center justify-center shadow-2xl p-2 shrink-0">
@@ -95,6 +93,13 @@ export function StartupDetailsContent({ startup }: StartupDetailsContentProps) {
                                 </p>
                                 
                                 <div className="flex flex-wrap gap-4 mt-5">
+                                     {startup.careersUrl && (
+                                       <a href={startup.careersUrl} target="_blank" rel="noreferrer">
+                                         <Button size="sm" className="gap-2 h-9 bg-primary text-primary-foreground hover:bg-primary/90">
+                                           <ExternalLink className="h-3.5 w-3.5" /> View Role
+                                         </Button>
+                                       </a>
+                                     )}
                                      {startup.websiteUrl && (
                                        <a href={startup.websiteUrl} target="_blank" rel="noreferrer">
                                          <Button variant="outline" size="sm" className="gap-2 h-9 border-white/10 hover:bg-white/5">
@@ -202,46 +207,36 @@ export function StartupDetailsContent({ startup }: StartupDetailsContentProps) {
                         </div>
                     </div>
 
-                    {startup.aiSummary && (
-                        <div className="mt-6 pt-6 border-t border-white/5">
-                            <div className="flex gap-2 mb-2">
-                                <Zap className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                                <span className="text-xs font-bold uppercase tracking-wider text-yellow-400">Why it's interesting</span>
-                            </div>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                                {startup.aiSummary}
-                            </p>
+                    {(startup.aiSummary || startup.outreachAngle) && (
+                        <div className="mt-6 pt-6 border-t border-white/5 space-y-6">
+                            {startup.aiSummary && (
+                                <div>
+                                    <div className="flex gap-2 mb-2">
+                                        <Zap className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                                        <span className="text-xs font-bold uppercase tracking-wider text-yellow-400">Why it's interesting</span>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">
+                                        {startup.aiSummary}
+                                    </p>
+                                </div>
+                            )}
+                            
+                            {startup.outreachAngle && (
+                                <div>
+                                    <div className="flex gap-2 mb-2">
+                                        <Users className="h-4 w-4 text-blue-400" />
+                                        <span className="text-xs font-bold uppercase tracking-wider text-blue-400">Outreach Angle</span>
+                                    </div>
+                                    <div className="bg-background/50 border border-white/10 rounded-lg p-3 text-left text-sm text-muted-foreground italic relative group cursor-pointer hover:border-primary/30 transition-colors">
+                                        "{startup.outreachAngle}"
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
 
-                {/* Apply CTA */}
-                <div className="bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 rounded-2xl p-6 text-center sticky top-24">
-                     <h3 className="font-bold text-lg text-white mb-2">Interested in {startup.name}?</h3>
-                     <p className="text-sm text-muted-foreground mb-6">
-                        They are actively looking for engineers. Use our outreach template to stand out.
-                     </p>
-                     
-                     {startup.outreachAngle && (
-                         <div className="bg-background/50 border border-white/10 rounded-lg p-3 text-left mb-4 text-xs text-muted-foreground italic relative group cursor-pointer hover:border-primary/30 transition-colors">
-                            "{startup.outreachAngle}"
-                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-white text-[10px] px-1.5 rounded">Copy</div>
-                         </div>
-                     )}
 
-                     <Button 
-                        className="w-full h-11 font-semibold text-base shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform disabled:opacity-70" 
-                        size="lg"
-                        onClick={handleApply}
-                        disabled={isApplying}
-                     >
-                        {isApplying ? (
-                            <>Sending...</>
-                        ) : (
-                            <>Apply Now <ExternalLink className="ml-2 h-4 w-4" /></>
-                        )}
-                     </Button>
-                </div>
 
                 {/* Founders */}
                 {startup.founders && startup.founders.length > 0 && (

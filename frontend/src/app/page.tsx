@@ -3,19 +3,19 @@ import { Button } from "@/components/ui/button";
 import { StartupCard } from "@/components/startup/startup-card";
 import { GridBackground } from "@/components/ui/grid-background";
 import { SlidersHorizontal, ArrowRight, TrendingUp, Globe, Zap, Sparkles } from "lucide-react";
-import { MOCK_STARTUPS } from "@/lib/mock-data";
 import { SearchBar } from "@/components/startup/search-bar";
 import { Pagination } from "@/components/startup/pagination";
 import { RefreshButton } from "@/components/startup/refresh-button";
 import Link from "next/link";
 
-async function getStartups(page: number = 1, search: string = "", source: string = "") {
+async function getStartups(page: number = 1, search: string = "", source: string = "", locationFilter: string = "") {
   try {
     const queryParams = new URLSearchParams({
       page: page.toString(),
       limit: "12",
       ...(search && { search }),
       ...(source && { source }),
+      ...(locationFilter && { locationFilter }),
     });
     
     const res = await fetch(`http://localhost:3001/startups?${queryParams.toString()}`, { cache: 'no-store' });
@@ -37,11 +37,11 @@ export default async function Home({
   const page = Number(resolvedParams.page) || 1;
   const search = typeof resolvedParams.search === "string" ? resolvedParams.search : "";
   const source = typeof resolvedParams.source === "string" ? resolvedParams.source : "";
+  const locationFilter = typeof resolvedParams.locationFilter === "string" ? resolvedParams.locationFilter : "";
 
-  const { data: backendStartups, meta } = await getStartups(page, search, source);
+  const { data: backendStartups, meta } = await getStartups(page, search, source, locationFilter);
   
-  // Only use mock data if there's no search/filter and backend returned nothing
-  const startups = backendStartups.length > 0 ? backendStartups : (search || source ? [] : MOCK_STARTUPS);
+  const startups = backendStartups || [];
 
   return (
     <div className="flex flex-col font-sans selection:bg-primary/30">
@@ -50,10 +50,6 @@ export default async function Home({
       <section className="relative pt-20 pb-32 md:pt-32 md:pb-48 overflow-hidden">
         <GridBackground />
         
-        {/* Glow Effects */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/20 blur-[120px] rounded-full opacity-50 pointer-events-none" />
-        <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full opacity-30 pointer-events-none" />
-
         <div className="container mx-auto px-4 text-center relative z-10">
           
           {/* Announcement Pill */}
@@ -77,7 +73,7 @@ export default async function Home({
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-muted-foreground/90 max-w-2xl mx-auto mb-12 leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-            Stop applying to black holes. We use AI to identify early-stage teams with 
+            Stop applying to outdated listings. We use AI to identify early-stage teams with 
             <span className="text-growth font-semibold"> high hiring probability</span> and 
             <span className="text-blue-400 font-semibold"> remote-first</span> DNA.
           </p>
@@ -154,7 +150,7 @@ export default async function Home({
       </section>
 
       {/* --- Dashboard Preview (Live Data) --- */}
-      <section id="discover" className="py-24 container mx-auto px-4">
+      <section id="discover" className="py-24 container mx-auto px-4 max-w-5xl">
         <div className="flex flex-col md:flex-row items-end justify-between mb-10 gap-4">
           <div>
             <h2 className="text-3xl font-bold tracking-tight mb-2 text-white flex items-center gap-3">
@@ -188,19 +184,27 @@ export default async function Home({
               )}
             </div>
           </div>
-           <div className="flex gap-3">
+           <div className="flex gap-3 overflow-x-auto pb-2 -mb-2">
              <RefreshButton />
-             <Button variant="outline" className="gap-2 border-white/10 hover:bg-white/5">
+             <Link href={locationFilter === 'global_india' ? '/' : '/?locationFilter=global_india'}>
+               <Button 
+                 variant={locationFilter === 'global_india' ? 'default' : 'outline'} 
+                 className={`gap-2 whitespace-nowrap ${locationFilter === 'global_india' ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'border-white/10 hover:bg-white/5'}`}
+               >
+                 <Globe className="h-4 w-4" /> {locationFilter === 'global_india' ? 'Showing Global/India' : 'Worldwide / India'}
+               </Button>
+             </Link>
+             <Button variant="outline" className="gap-2 border-white/10 hover:bg-white/5 opacity-50 cursor-not-allowed" title="Account system coming in v2">
                 Saved <div className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded-sm">0</div>
              </Button>
-             <Button variant="outline" className="gap-2 border-white/10 hover:bg-white/5">
+             <Button variant="outline" className="gap-2 border-white/10 hover:bg-white/5 opacity-50 cursor-not-allowed" title="Advanced filters coming soon">
                <SlidersHorizontal className="h-4 w-4" /> Filters
              </Button>
            </div>
         </div>
 
         {startups.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="flex flex-col gap-4">
             {startups.map((startup: any, index: number) => (
               <div key={startup.id} className="animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: `${Math.min(index, 12) * 50}ms` }}>
                   <StartupCard startup={startup} />
@@ -208,9 +212,13 @@ export default async function Home({
             ))}
           </div>
         ) : (
-          <div className="py-20 text-center">
-            <h3 className="text-xl font-medium text-white mb-2">No startups found</h3>
-            <p className="text-muted-foreground">Try adjusting your search terms or filters.</p>
+          <div className="py-24 text-center border border-white/5 bg-secondary/10 rounded-2xl max-w-2xl mx-auto">
+            <h3 className="text-xl font-medium text-white mb-3">No live opportunities found</h3>
+            <p className="text-muted-foreground mb-6">
+              There are currently zero active jobs matching your criteria in the database.
+              If this is a fresh install, click the refresh button to trigger the scrapers and source real-time opportunities.
+            </p>
+            <RefreshButton />
           </div>
         )}
         

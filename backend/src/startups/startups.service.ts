@@ -37,7 +37,7 @@ export class StartupsService {
     return this.startupsRepository.save(startup);
   }
 
-  async findAll(query: { page?: number; limit?: number; search?: string; source?: string }) {
+  async findAll(query: { page?: number; limit?: number; search?: string; source?: string; locationFilter?: string }) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 20;
     const search = query.search || '';
@@ -58,6 +58,14 @@ export class StartupsService {
       } else {
         queryBuilder.where('startup.source = :source', { source });
       }
+    }
+
+    if (query.locationFilter === 'global_india') {
+      const locKeywords = ['%global%', '%worldwide%', '%india%', '%anywhere%', '%apac%', '%remote (any)%'];
+      const conditions = locKeywords.map((_, i) => `LOWER(startup.location) LIKE :loc${i}`);
+      const params = locKeywords.reduce((acc, val, i) => ({ ...acc, [`loc${i}`]: val }), {});
+      
+      queryBuilder.andWhere(`(${conditions.join(' OR ')})`, params);
     }
 
     queryBuilder.orderBy('startup.updatedAt', 'DESC');
