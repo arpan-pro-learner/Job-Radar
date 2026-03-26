@@ -71,7 +71,7 @@ export function StartupDetailsContent({ startup }: StartupDetailsContentProps) {
                 {/* Header Card */}
                 <div className="bg-card/40 border border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-md relative overflow-hidden">
                     <div className="flex flex-col md:flex-row gap-6 justify-between items-start relative z-10">
-                        <div className="flex gap-5">
+                        <div className="flex flex-col sm:flex-row gap-5 w-full">
                             <div className="h-20 w-20 md:h-24 md:w-24 rounded-2xl bg-background border border-white/10 flex items-center justify-center shadow-2xl p-2 shrink-0">
                                 {startup.logo ? (
                                     <img src={startup.logo} alt={startup.name} className="h-full w-full object-contain rounded-xl" /> 
@@ -80,15 +80,15 @@ export function StartupDetailsContent({ startup }: StartupDetailsContentProps) {
                                 )}
                             </div>
                             <div>
-                                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 flex items-center gap-3">
+                                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 flex flex-wrap items-center gap-3 break-words">
                                     {startup.name}
                                     {startup.batch && (
-                                        <Badge variant="glass" className="text-xs h-6 px-2.5 font-mono text-primary border-primary/20 bg-primary/5">
+                                        <Badge variant="glass" className="text-xs h-6 px-2.5 font-mono text-primary border-primary/20 bg-primary/5 shrink-0">
                                             {startup.batch}
                                         </Badge>
                                     )}
                                 </h1>
-                                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
+                                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl break-words">
                                     {startup.jobTitle || "Software Engineer"}
                                 </p>
                                 

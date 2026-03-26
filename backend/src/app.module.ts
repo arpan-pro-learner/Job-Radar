@@ -26,6 +26,19 @@ import { AiModule } from './ai/ai.module';
           };
         }
 
+        const dbUrl = configService.get<string>('DATABASE_URL');
+        if (dbUrl) {
+          return {
+            type: 'postgres',
+            url: dbUrl,
+            autoLoadEntities: true,
+            synchronize: true, // Auto-migrating schema for now
+            ssl: {
+              rejectUnauthorized: false,
+            },
+          };
+        }
+
         return {
           type: 'postgres',
           host: configService.get<string>('DB_HOST', 'localhost'),
@@ -34,7 +47,7 @@ import { AiModule } from './ai/ai.module';
           password: configService.get<string>('DB_PASSWORD', 'postgres'),
           database: configService.get<string>('DB_NAME', 'founder_radar'),
           autoLoadEntities: true,
-          synchronize: true, // TODO: set to false in production
+          synchronize: true, 
         };
       },
       inject: [ConfigService],

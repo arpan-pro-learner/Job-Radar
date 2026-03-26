@@ -64,7 +64,7 @@ export default async function Home({
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 max-w-5xl mx-auto leading-[1.1] animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+          <h1 className="text-4xl md:text-7xl font-extrabold tracking-tight mb-8 max-w-5xl mx-auto leading-[1.1] animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 px-2 lg:px-0">
             Discover the next unicorn <br className="hidden md:block"/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-indigo-500 animate-gradient-x">
               before the crowd.
@@ -84,13 +84,15 @@ export default async function Home({
           </div>
 
           {/* Trusted By / Social Proof */}
-          <div className="mt-20 pt-8 border-t border-white/5 max-w-4xl mx-auto animate-in fade-in duration-1000 delay-500">
+          <div className="mt-20 pt-8 border-t border-white/5 max-w-4xl mx-auto animate-in fade-in duration-1000 delay-500 px-4">
             <p className="text-sm font-medium text-muted-foreground/60 mb-6 uppercase tracking-widest text-[10px]">Data Sourced From</p>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-              <div className="flex items-center gap-2 font-bold text-lg text-white">Reddit r/hiring</div>
-              <div className="flex items-center gap-2 font-bold text-lg text-white"><span className="text-orange-600 bg-white rounded-full p-0.5 h-6 w-6 flex items-center justify-center">P</span> Product Hunt</div>
-              <div className="flex items-center gap-2 font-bold text-lg text-white">Hacker News</div>
-              <div className="flex items-center gap-2 font-bold text-lg text-white">Lets-Code</div>
+            <div className="grid grid-cols-2 lg:flex lg:justify-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-500 text-left lg:text-center items-center">
+              <div className="flex items-center gap-2 font-bold text-sm md:text-lg text-white">Reddit r/hiring</div>
+              <div className="flex items-center gap-2 font-bold text-sm md:text-lg text-white">
+                <span className="text-orange-600 bg-white rounded-full p-0.5 h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-[10px] md:text-xs">P</span> Product Hunt
+              </div>
+              <div className="flex items-center gap-2 font-bold text-sm md:text-lg text-white">Hacker News</div>
+              <div className="flex items-center gap-2 font-bold text-sm md:text-lg text-white">Lets-Code</div>
             </div>
           </div>
         </div>
@@ -151,7 +153,7 @@ export default async function Home({
 
       {/* --- Dashboard Preview (Live Data) --- */}
       <section id="discover" className="py-24 container mx-auto px-4 max-w-5xl">
-        <div className="flex flex-col md:flex-row items-end justify-between mb-10 gap-4">
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-6">
           <div>
             <h2 className="text-3xl font-bold tracking-tight mb-2 text-white flex items-center gap-3">
               {search || source ? (
@@ -184,20 +186,20 @@ export default async function Home({
               )}
             </div>
           </div>
-           <div className="flex gap-3 overflow-x-auto pb-2 -mb-2">
+           <div className="flex flex-wrap gap-2 w-full md:w-auto h-auto min-h-0">
              <RefreshButton />
              <Link href={locationFilter === 'global_india' ? '/' : '/?locationFilter=global_india'}>
                <Button 
                  variant={locationFilter === 'global_india' ? 'default' : 'outline'} 
-                 className={`gap-2 whitespace-nowrap ${locationFilter === 'global_india' ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'border-white/10 hover:bg-white/5'}`}
+                 className={`gap-2 h-9 text-xs md:text-sm whitespace-nowrap ${locationFilter === 'global_india' ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'border-white/10 hover:bg-white/5'}`}
                >
-                 <Globe className="h-4 w-4" /> {locationFilter === 'global_india' ? 'Showing Global/India' : 'Worldwide / India'}
+                 <Globe className="h-4 w-4" /> {locationFilter === 'global_india' ? 'Global/India' : 'Worldwide / India'}
                </Button>
              </Link>
-             <Button variant="outline" className="gap-2 border-white/10 hover:bg-white/5 opacity-50 cursor-not-allowed" title="Account system coming in v2">
+             <Button variant="outline" className="gap-2 h-9 text-xs border-white/10 hover:bg-white/5 opacity-50 cursor-not-allowed" title="Account system coming in v2">
                 Saved <div className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded-sm">0</div>
              </Button>
-             <Button variant="outline" className="gap-2 border-white/10 hover:bg-white/5 opacity-50 cursor-not-allowed" title="Advanced filters coming soon">
+             <Button variant="outline" className="gap-2 h-9 text-xs border-white/10 hover:bg-white/5 opacity-50 cursor-not-allowed" title="Advanced filters coming soon">
                <SlidersHorizontal className="h-4 w-4" /> Filters
              </Button>
            </div>
