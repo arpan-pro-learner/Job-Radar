@@ -5,7 +5,8 @@ import { StartupDetailsContent } from "@/components/startup/startup-details-cont
 // Helper to get startup data
 async function getStartup(id: string) {
   try {
-    const res = await fetch(`http://localhost:3001/startups/${id}`, { cache: 'no-store' });
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const res = await fetch(`${apiUrl}/startups/${id}`, { cache: 'no-store' });
     if (!res.ok) {
         // Fallback to mock search
         return MOCK_STARTUPS.find(s => s.id === id) || null;

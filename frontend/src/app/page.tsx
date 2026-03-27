@@ -18,7 +18,8 @@ async function getStartups(page: number = 1, search: string = "", source: string
       ...(locationFilter && { locationFilter }),
     });
     
-    const res = await fetch(`http://localhost:3001/startups?${queryParams.toString()}`, { cache: 'no-store' });
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const res = await fetch(`${apiUrl}/startups?${queryParams.toString()}`, { cache: 'no-store' });
     if (!res.ok) {
        return { data: [], meta: { total: 0, page: 1, lastPage: 0 } };
     }
