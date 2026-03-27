@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://find-job-radar.vercel.app/opengraph-image",
+        url: "https://find-job-radar.vercel.app/og-image.png",
         width: 1200,
         height: 630,
         alt: "Job Radar — AI-Powered Startup Job Discovery",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Job Radar | Remote Startup Jobs",
     description: "Discover early-stage startup jobs with high hiring probability.",
-    images: ["https://find-job-radar.vercel.app/opengraph-image"],
+    images: ["https://find-job-radar.vercel.app/og-image.png"],
   },
 };
 
