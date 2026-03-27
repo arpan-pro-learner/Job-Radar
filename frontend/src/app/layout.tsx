@@ -23,15 +23,24 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Job Radar - Discover Early-Stage Startup Jobs",
     description: "AI-powered job discovery tool for developers to find high-growth remote startup jobs.",
-    url: "/",
+    url: "https://find-job-radar.vercel.app",
     siteName: "Job Radar",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "https://find-job-radar.vercel.app/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Job Radar — AI-Powered Startup Job Discovery",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Job Radar | Remote Startup Jobs",
     description: "Discover early-stage startup jobs with high hiring probability.",
+    images: ["https://find-job-radar.vercel.app/opengraph-image"],
   },
 };
 
