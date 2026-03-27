@@ -31,16 +31,17 @@ export class JobFilter {
   };
 
   static filter(title: string, description: string): FilterResult {
+    const lowerTitle = title.toLowerCase();
     const combinedText = `${title} ${description}`.toLowerCase();
     
-    // 1. Check for Exclusions
+    // 1. Check for Exclusions (Only in TITLE to prevent dropping jobs because the word 'content' 'sales' or 'support' appears in the description)
     for (const keyword of this.EXCLUDE_KEYWORDS) {
-      if (combinedText.includes(keyword)) {
+      if (new RegExp(`\\b${keyword}\\b`, 'i').test(lowerTitle)) {
         // Special check: Don't exclude if 'senior' is mentioned but it actually says 1-2 years
         if (keyword === 'senior' && (combinedText.includes('1 year') || combinedText.includes('2 year') || combinedText.includes('3 year'))) {
             continue;
         }
-        return { passed: false, score: 0, reason: `Excluded due to keyword: ${keyword}` };
+        return { passed: false, score: 0, reason: `Excluded due to keyword in title: ${keyword}` };
       }
     }
 
