@@ -20,205 +20,208 @@ export default async function Image() {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '56px 72px',
           position: 'relative',
-          overflow: 'hidden',
           fontFamily: 'sans-serif',
         }}
       >
-        {/* Background grid lines */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'linear-gradient(rgba(99,102,241,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.07) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-            display: 'flex',
-          }}
-        />
-
-        {/* Glow orb – top left */}
-        <div
-          style={{
-            position: 'absolute',
-            top: -160,
-            left: -160,
-            width: 520,
-            height: 520,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%)',
-            display: 'flex',
-          }}
-        />
-
-        {/* Glow orb – bottom right */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: -200,
-            right: -80,
-            width: 480,
-            height: 480,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(56,189,248,0.2) 0%, transparent 70%)',
-            display: 'flex',
-          }}
-        />
-
-        {/* Top border accent */}
+        {/* Top gradient accent bar */}
         <div
           style={{
             position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
-            height: 3,
+            height: 4,
             background: 'linear-gradient(90deg, #6366f1, #38bdf8, #4ade80)',
             display: 'flex',
           }}
         />
 
-        {/* Main content */}
+        {/* Purple glow blob top-left */}
         <div
           style={{
+            position: 'absolute',
+            top: -120,
+            left: -120,
+            width: 400,
+            height: 400,
+            borderRadius: '50%',
+            background: '#6366f1',
+            opacity: 0.15,
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            padding: '60px 72px',
-            height: '100%',
-            position: 'relative',
-            zIndex: 10,
+            filter: 'blur(80px)',
           }}
-        >
-          {/* Top row — Brand */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            {/* Radar icon */}
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 12,
-                background: 'linear-gradient(135deg, #6366f1, #38bdf8)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
+        />
+
+        {/* Blue glow blob bottom-right */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: -140,
+            right: -100,
+            width: 380,
+            height: 380,
+            borderRadius: '50%',
+            background: '#38bdf8',
+            opacity: 0.12,
+            display: 'flex',
+            filter: 'blur(80px)',
+          }}
+        />
+
+        {/* ── TOP ROW: Brand ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          {/* Icon badge */}
+          <div
+            style={{
+              width: 52,
+              height: 52,
+              borderRadius: 14,
+              background: 'linear-gradient(135deg, #6366f1, #38bdf8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="8" />
-                <circle cx="12" cy="12" r="3" />
-                <path d="M12 12l3.5-3.5" />
-              </svg>
-            </div>
-            <span style={{ fontSize: 28, fontWeight: 700, color: '#f1f5f9', letterSpacing: '-0.02em' }}>
-              Job Radar
+              <circle cx="12" cy="12" r="8" />
+              <circle cx="12" cy="12" r="3" />
+              <path d="M12 12l3.2-3.2" />
+            </svg>
+          </div>
+          <span
+            style={{
+              fontSize: 30,
+              fontWeight: 700,
+              color: '#f1f5f9',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Job Radar
+          </span>
+          <div
+            style={{
+              marginLeft: 6,
+              padding: '4px 14px',
+              background: 'rgba(99,102,241,0.15)',
+              border: '1px solid rgba(99,102,241,0.4)',
+              borderRadius: 100,
+              fontSize: 14,
+              color: '#818cf8',
+              fontWeight: 600,
+              display: 'flex',
+            }}
+          >
+            Beta
+          </div>
+        </div>
+
+        {/* ── MIDDLE: Headline ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* AI pill */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 18px',
+              background: 'rgba(74,222,128,0.1)',
+              border: '1px solid rgba(74,222,128,0.3)',
+              borderRadius: 100,
+              width: 'fit-content',
+            }}
+          >
+            <span style={{ fontSize: 16, color: '#4ade80', fontWeight: 600 }}>
+              ✦ AI-Powered Startup Job Discovery
             </span>
-            <div
-              style={{
-                marginLeft: 8,
-                padding: '4px 12px',
-                background: 'rgba(99,102,241,0.15)',
-                border: '1px solid rgba(99,102,241,0.4)',
-                borderRadius: 100,
-                fontSize: 14,
-                color: '#818cf8',
-                fontWeight: 600,
-              }}
-            >
-              Beta
-            </div>
           </div>
 
-          {/* Center — Headline */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div
-                style={{
-                  padding: '6px 16px',
-                  background: 'rgba(74,222,128,0.1)',
-                  border: '1px solid rgba(74,222,128,0.3)',
-                  borderRadius: 100,
-                  fontSize: 15,
-                  color: '#4ade80',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
-              >
-                ✦ AI-Powered Discovery
-              </div>
-            </div>
-            <div
+          {/* Main headline — two lines, no gradient (Satori limitation) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span
               style={{
-                fontSize: 72,
+                fontSize: 76,
                 fontWeight: 800,
                 color: '#f8fafc',
-                lineHeight: 1.05,
-                letterSpacing: '-0.04em',
+                lineHeight: 1,
+                letterSpacing: '-0.045em',
               }}
             >
               Discover the next
-              <br />
-              <span
-                style={{
-                  background: 'linear-gradient(90deg, #6366f1, #38bdf8)',
-                  backgroundClip: 'text',
-                  color: 'transparent',
-                }}
-              >
-                unicorn.
-              </span>
-            </div>
-            <div
+            </span>
+            <span
               style={{
-                fontSize: 22,
-                color: '#94a3b8',
-                lineHeight: 1.5,
-                maxWidth: 680,
+                fontSize: 76,
+                fontWeight: 800,
+                color: '#818cf8',
+                lineHeight: 1,
+                letterSpacing: '-0.045em',
               }}
             >
-              Stop applying to outdated listings. We surface early-stage startups with high hiring probability — fresher, faster, smarter.
-            </div>
+              unicorn.
+            </span>
           </div>
 
-          {/* Bottom row — Stats + URL */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', gap: 16 }}>
-              {[
-                { icon: '🌍', label: 'Remote-First' },
-                { icon: '🤖', label: 'AI Scored' },
-                { icon: '⚡', label: 'Live Data' },
-              ].map((tag) => (
-                <div
-                  key={tag.label}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '10px 20px',
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 100,
-                    fontSize: 18,
-                    color: '#e2e8f0',
-                    fontWeight: 500,
-                  }}
-                >
-                  {tag.icon} {tag.label}
-                </div>
-              ))}
-            </div>
-            <div style={{ fontSize: 18, color: '#475569', fontWeight: 500 }}>
-              find-job-radar.vercel.app
-            </div>
+          {/* Subline */}
+          <span
+            style={{
+              fontSize: 22,
+              color: '#64748b',
+              lineHeight: 1.5,
+              maxWidth: 700,
+            }}
+          >
+            Stop applying to outdated listings. We surface early-stage startups
+            with high hiring probability — fresher, faster, smarter.
+          </span>
+        </div>
+
+        {/* ── BOTTOM ROW: Tags + URL ── */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', gap: 14 }}>
+            {['🌍  Remote-First', '🤖  AI Scored', '⚡  Live Data'].map((tag) => (
+              <div
+                key={tag}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '10px 22px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.09)',
+                  borderRadius: 100,
+                  fontSize: 18,
+                  color: '#cbd5e1',
+                  fontWeight: 500,
+                }}
+              >
+                {tag}
+              </div>
+            ))}
           </div>
+          <span style={{ fontSize: 18, color: '#334155', fontWeight: 500 }}>
+            find-job-radar.vercel.app
+          </span>
         </div>
       </div>
     ),
-    {
-      ...size,
-    }
+    { ...size }
   )
 }
