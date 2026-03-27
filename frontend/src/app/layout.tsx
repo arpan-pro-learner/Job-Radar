@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "Job Radar | AI-Powered Startup Job Discovery",
   description: "Stop guessing. We use AI to find early-stage startups with high hiring probability and remote-first DNA. Discover your next unicorn role before the crowd.",
   keywords: ["startup jobs", "remote developer jobs", "software engineering jobs", "tech startups"],
-  metadataBase: new URL('https://jobradar.dev'),
+  metadataBase: new URL('https://find-job-radar.vercel.app'),
   openGraph: {
     title: "Job Radar - Discover Early-Stage Startup Jobs",
     description: "AI-powered job discovery tool for developers to find high-growth remote startup jobs.",
