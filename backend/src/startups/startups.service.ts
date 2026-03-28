@@ -44,20 +44,17 @@ export class StartupsService {
     const source = query.source || '';
 
     const queryBuilder = this.startupsRepository.createQueryBuilder('startup');
+    queryBuilder.where('1=1'); // Base condition to safely chain andWhere calls
 
     if (search) {
-      queryBuilder.where(
+      queryBuilder.andWhere(
         '(LOWER(startup.name) LIKE LOWER(:search) OR LOWER(startup.jobTitle) LIKE LOWER(:search) OR LOWER(startup.shortDescription) LIKE LOWER(:search))',
         { search: `%${search}%` }
       );
     }
 
     if (source) {
-      if (search) {
-        queryBuilder.andWhere('startup.source = :source', { source });
-      } else {
-        queryBuilder.where('startup.source = :source', { source });
-      }
+      queryBuilder.andWhere('startup.source LIKE :source', { source: `${source}%` });
     }
 
     if (query.locationFilter === 'global_india') {

@@ -19,8 +19,7 @@ export class IngestionService {
     this.scrapers = [
       new HnHiringScraper(),
       new RedditScraper(),
-      new LetsCodeScraper(),
-      // Add other scrapers here as they are implemented
+      new LetsCodeScraper()
     ];
   }
 

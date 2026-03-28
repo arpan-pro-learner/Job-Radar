@@ -137,11 +137,11 @@ export function StartupCard({ startup }: StartupCardProps) {
             <Bookmark className={cn("h-4 w-4", saved && "fill-current")} />
           </Button>
 
-          <Link href={`/startups/${startup.id}`} className="shrink-0">
-            <Button variant="secondary" className="h-9 px-3 text-xs md:text-sm shrink-0 transition-colors">
+          <Button variant="secondary" asChild className="h-9 px-3 text-xs md:text-sm shrink-0 transition-colors">
+            <Link href={`/startups/${startup.id}`}>
               Details
-            </Button>
-          </Link>
+            </Link>
+          </Button>
 
           {applyUrl && (
             <a href={applyUrl} target="_blank" rel="noreferrer" className="shrink-0">

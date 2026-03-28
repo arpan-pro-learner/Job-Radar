@@ -67,11 +67,11 @@ export function Navbar() {
           <Button variant="ghost" size="sm" className="font-medium text-muted-foreground hover:text-white">
             Log In
           </Button>
-          <Link href="/#discover">
-            <Button size="sm" className="rounded-full px-6 font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 transition-all">
+          <Button size="sm" asChild className="rounded-full px-6 font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 transition-all">
+            <Link href="/#discover">
               Get Started
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
 
         {/* Mobile Toggle */}
@@ -98,9 +98,11 @@ export function Navbar() {
           ))}
            <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/5">
             <Button variant="ghost" className="w-full justify-start">Log In</Button>
-             <Link href="/#discover" onClick={() => setMobileMenuOpen(false)}>
-              <Button className="w-full rounded-full">Get Started</Button>
-            </Link>
+             <Button className="w-full rounded-full" asChild>
+               <Link href="/#discover" onClick={() => setMobileMenuOpen(false)}>
+                Get Started
+               </Link>
+             </Button>
            </div>
         </div>
       )}

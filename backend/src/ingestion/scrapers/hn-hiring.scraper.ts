@@ -54,7 +54,7 @@ export class HnHiringScraper extends BaseScraper {
       });
       const $ = cheerio.load(data);
       const jobs: CreateStartupDto[] = [];
-      const elements = $('li').toArray();
+      const elements = $('li').toArray().slice(0, 30);
 
       for (const el of elements) {
         const fullText = $(el).text();

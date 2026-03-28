@@ -18,7 +18,7 @@ async function getStartups(page: number = 1, search: string = "", source: string
       ...(locationFilter && { locationFilter }),
     });
     
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001';
     const res = await fetch(`${apiUrl}/startups?${queryParams.toString()}`, { cache: 'no-store' });
     if (!res.ok) {
        return { data: [], meta: { total: 0, page: 1, lastPage: 0 } };
@@ -167,7 +167,7 @@ export default async function Home({
               )}
             </h2>
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-muted-foreground text-sm">
+              <div className="text-muted-foreground text-sm">
                 {search || source ? (
                   <>
                     Found <span className="text-foreground font-semibold">{meta?.total || 0}</span> positions 
@@ -177,33 +177,67 @@ export default async function Home({
                 ) : (
                   "Freshly indexed startups with active hiring signals."
                 )}
-              </p>
+              </div>
               {(search || source) && (
-                <Link href="/">
-                  <Button variant="link" size="sm" className="h-auto p-0 text-primary hover:text-primary/80 text-xs font-medium decoration-primary/30">
+                <Button variant="link" size="sm" asChild className="h-auto p-0 text-primary hover:text-primary/80 text-xs font-medium decoration-primary/30">
+                  <Link href="/">
                     Clear all filters
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               )}
             </div>
           </div>
            <div className="flex flex-wrap gap-2 w-full md:w-auto h-auto min-h-0">
              <RefreshButton />
-             <Link href={locationFilter === 'global_india' ? '/' : '/?locationFilter=global_india'}>
-               <Button 
-                 variant={locationFilter === 'global_india' ? 'default' : 'outline'} 
-                 className={`gap-2 h-9 text-xs md:text-sm whitespace-nowrap ${locationFilter === 'global_india' ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'border-white/10 hover:bg-white/5'}`}
-               >
+             <Button 
+               variant={locationFilter === 'global_india' ? 'default' : 'outline'} 
+               asChild
+               className={`gap-2 h-9 text-xs md:text-sm whitespace-nowrap ${locationFilter === 'global_india' ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'border-white/10 hover:bg-white/5'}`}
+             >
+               <Link href={locationFilter === 'global_india' ? '/' : '/?locationFilter=global_india'}>
                  <Globe className="h-4 w-4" /> {locationFilter === 'global_india' ? 'Global/India' : 'Worldwide / India'}
-               </Button>
-             </Link>
+               </Link>
+             </Button>
              <Button variant="outline" className="gap-2 h-9 text-xs border-white/10 hover:bg-white/5 opacity-50 cursor-not-allowed" title="Account system coming in v2">
                 Saved <div className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded-sm">0</div>
              </Button>
-             <Button variant="outline" className="gap-2 h-9 text-xs border-white/10 hover:bg-white/5 opacity-50 cursor-not-allowed" title="Advanced filters coming soon">
+            <Button variant="outline" className="gap-2 h-9 text-xs border-white/10 hover:bg-white/5 opacity-50 cursor-not-allowed" title="Advanced filters coming soon">
                <SlidersHorizontal className="h-4 w-4" /> Filters
              </Button>
            </div>
+        </div>
+
+        {/* Source Filter Pills */}
+        <div className="flex flex-wrap items-center gap-2 mb-8">
+          <span className="text-sm text-muted-foreground mr-2 font-medium">Platform:</span>
+          {[
+            { label: 'All', value: '' },
+            { label: 'HN Hiring', value: 'HN Hiring' },
+            { label: 'Lets-Code', value: 'Lets-Code' },
+            { label: 'Reddit', value: 'Reddit' }
+          ].map((s) => {
+            const isActive = source === s.value;
+            const href = `/?${new URLSearchParams({
+              ...(search && { search }),
+              ...(s.value && { source: s.value }),
+              ...(locationFilter && { locationFilter }),
+            }).toString()}`;
+            
+            return (
+              <Link key={s.label} href={href} className={isActive ? 'pointer-events-none' : ''}>
+                <Badge
+                  variant={isActive ? "default" : "outline"}
+                  className={`px-3 py-1.5 text-xs font-medium cursor-pointer transition-all ${
+                    isActive 
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shadow-primary/20" 
+                      : "border-white/10 text-muted-foreground hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {s.label}
+                </Badge>
+              </Link>
+            );
+          })}
         </div>
 
         {startups.length > 0 ? (
