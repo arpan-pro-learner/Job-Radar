@@ -1,24 +1,19 @@
-import { YCJobsScraper } from './src/ingestion/scrapers/yc.scraper';
-import { LetsCodeScraper } from './src/ingestion/scrapers/lets-code.scraper';
+import { HnHiringScraper } from './src/ingestion/scrapers/hn-hiring.scraper';
+import { RedditScraper } from './src/ingestion/scrapers/reddit.scraper';
 
 async function test() {
-  try {
-    console.log('Testing YCJobs...');
-    const ycScraper = new YCJobsScraper();
-    const ycRes = await ycScraper.scrape();
-    console.log(`YCJobs returned ${ycRes.length} jobs`);
-  } catch (e) {
-    console.error('YCJobs failed:', e);
-  }
+  const hnScraper = new HnHiringScraper();
+  Object.defineProperty(hnScraper, 'logger', { value: { log: console.log, error: console.error, warn: console.warn } });
+  
+  const hnJobs = await hnScraper.scrape();
+  console.log(`HN Jobs Found: ${hnJobs.length}`);
+  if(hnJobs.length > 0) console.log(hnJobs[0]);
 
-  try {
-    console.log('\nTesting LetsCode...');
-    const lcScraper = new LetsCodeScraper();
-    const lcRes = await lcScraper.scrape();
-    console.log(`LetsCode returned ${lcRes.length} jobs`);
-  } catch (e) {
-    console.error('LetsCode failed:', e);
-  }
+  const redditScraper = new RedditScraper();
+  Object.defineProperty(redditScraper, 'logger', { value: { log: console.log, error: console.error, warn: console.warn } });
+  const redditJobs = await redditScraper.scrape();
+  console.log(`Reddit Jobs Found: ${redditJobs.length}`);
+  if(redditJobs.length > 0) console.log(redditJobs[0]);
 }
 
-test();
+test().catch(console.error);

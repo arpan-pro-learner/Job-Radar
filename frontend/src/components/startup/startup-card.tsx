@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,10 +34,14 @@ interface StartupCardProps {
 export function StartupCard({ startup }: StartupCardProps) {
   const { isSaved, toggleSave } = useSavedStartups();
   const saved = isSaved(startup.id);
+  const [isRecent, setIsRecent] = useState(false);
 
-  const isRecent = startup.updatedAt 
-    ? (new Date().getTime() - new Date(startup.updatedAt).getTime()) < 24 * 60 * 60 * 1000 
-    : false;
+  useEffect(() => {
+    if (startup.updatedAt) {
+      const diff = new Date().getTime() - new Date(startup.updatedAt).getTime();
+      setIsRecent(diff < 24 * 60 * 60 * 1000);
+    }
+  }, [startup.updatedAt]);
 
   const applyUrl = startup.careersUrl || startup.websiteUrl;
 

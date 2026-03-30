@@ -142,10 +142,11 @@ export class HnHiringScraper extends BaseScraper {
                                   .replace(/^[a-zA-Z0-9_-]+\s+\d+\s+(hours?|days?|minutes?|months?)\s+ago\s*/i, '');
           let shortDescription = cleanText.substring(0, 300) + '...';
           
-          // Deep scrape if it's an ATS link to get richer AI context
-          if (careersUrl && (careersUrl.includes('greenhouse') || careersUrl.includes('lever') || careersUrl.includes('ashby') || careersUrl.includes('workable'))) {
-             shortDescription = await this.deepScrapeAtsLink(careersUrl, shortDescription);
-          }
+          // DISABLED: Deep scrape if it's an ATS link to get richer AI context
+          // This saves Gemini tokens and prevents 403s on Render.
+          // if (careersUrl && (careersUrl.includes('greenhouse') || careersUrl.includes('lever') || careersUrl.includes('ashby') || careersUrl.includes('workable'))) {
+          //    shortDescription = await this.deepScrapeAtsLink(careersUrl, shortDescription);
+          // }
 
           const startup: CreateStartupDto = {
             name: name,

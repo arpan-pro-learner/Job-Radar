@@ -11,9 +11,8 @@ export class JobFilter {
   ];
 
   private static readonly EXCLUDE_KEYWORDS = [
-    'senior', 'lead', 'principal', 'staff', 'manager', 'director', 'vp', 'head of',
     'sales', 'marketing', 'hr', 'ops', 'operations', 'data annotator', 'content',
-    'manual testing', 'qa engineer', 'support', 'it support', 'wordpress', 'labeling'
+    'manual testing', 'support', 'it support', 'wordpress', 'labeling', 'executive assistant'
   ];
 
   private static readonly RELEVANCE_WEIGHTS = {
@@ -34,35 +33,23 @@ export class JobFilter {
     const lowerTitle = title.toLowerCase();
     const combinedText = `${title} ${description}`.toLowerCase();
     
-    // 1. Check for Exclusions (Only in TITLE to prevent dropping jobs because the word 'content' 'sales' or 'support' appears in the description)
+    // 1. Check for Exclusions (Only in TITLE)
     for (const keyword of this.EXCLUDE_KEYWORDS) {
       if (new RegExp(`\\b${keyword}\\b`, 'i').test(lowerTitle)) {
-        // Special check: Don't exclude if 'senior' is mentioned but it actually says 1-2 years
-        if (keyword === 'senior' && (combinedText.includes('1 year') || combinedText.includes('2 year') || combinedText.includes('3 year'))) {
-            continue;
-        }
         return { passed: false, score: 0, reason: `Excluded due to keyword in title: ${keyword}` };
       }
     }
 
-    // 2. Check for Seniority by Year (Heuristic)
-    const expMatch = combinedText.match(/(\d+)\+?\s*(years?|yrs?)/);
-    if (expMatch) {
-        const years = parseInt(expMatch[1]);
-        if (years > 4) {
-            return { passed: false, score: 0, reason: `Experience too high: ${years}+ years` };
-        }
-    }
-
-    // 3. Check for Target Roles
-    const hasTargetRole = ['frontend', 'fullstack', 'full stack', 'software engineer', 'web engineer']
+    // 2. Check for Target Roles
+    const hasTargetRole = ['frontend', 'fullstack', 'full stack', 'software engineer', 'web engineer', 'developer', 'engineer', 'programmer']
       .some(role => combinedText.includes(role));
 
     if (!hasTargetRole) {
         // If not explicitly a dev role, it might still be a tech role, let's see if it has tech keywords
         const techMatchCount = this.TARGET_KEYWORDS.filter(k => combinedText.includes(k)).length;
-        if (techMatchCount < 2) {
-            return { passed: false, score: 0, reason: 'No clear tech role context' };
+        if (techMatchCount < 1) {
+            // Soft fail: we still return true but with a low score, so it's not totally invisible
+            return { passed: true, score: 30, reason: 'No clear tech role context - soft pass' };
         }
     }
 

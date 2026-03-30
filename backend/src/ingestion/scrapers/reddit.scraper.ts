@@ -13,7 +13,9 @@ export class RedditScraper extends BaseScraper {
       try {
         const { data } = await axios.get(`https://www.reddit.com/r/${sub}/new/.json?limit=25`, {
           headers: {
-            'User-Agent': 'FounderRadar/1.0.0 (by /u/yourusername)',
+            'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${Math.floor(Math.random() * 20) + 100}.0.0.0 Safari/537.36`,
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.5',
           },
         });
 
@@ -41,6 +43,10 @@ export class RedditScraper extends BaseScraper {
             // Fallback: search in description
             const descMatch = selftext.match(/at\s+([A-Z][a-zA-Z0-9]+)/);
             if (descMatch) name = descMatch[1];
+          }
+
+          if (name === 'Unknown Startup') {
+            name = `Startup-${post.data.id || Math.random().toString(36).substring(7)}`;
           }
 
           const startup: CreateStartupDto = {
