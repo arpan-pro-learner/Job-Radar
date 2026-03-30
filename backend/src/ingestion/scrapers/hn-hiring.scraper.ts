@@ -54,107 +54,73 @@ export class HnHiringScraper extends BaseScraper {
       });
       const $ = cheerio.load(data);
       const jobs: CreateStartupDto[] = [];
-      const elements = $('li').toArray().slice(0, 30);
+      const elements = $('li.job').toArray().slice(0, 30);
 
       for (const el of elements) {
+        const bodyText = $(el).find('.container').text().trim();
+        const userText = $(el).find('.user').text().trim();
         const fullText = $(el).text();
-        
-        // Skip items that don't look like job postings
-        if (!fullText.includes('|')) continue;
         
         const lowerText = fullText.toLowerCase();
         
-        // Ensure it's an engineering role and remote (user specified preference)
+        // Skip items that don't look like engineering roles
         const isEngineering = lowerText.includes('engineer') || lowerText.includes('developer') || lowerText.includes('software');
-        const isRemote = lowerText.includes('remote');
-        if (!isEngineering || !isRemote) continue;
+        if (!isEngineering) continue;
 
-        const parts = fullText.split('|').map(p => p.trim());
-        if (parts.length < 2) continue;
+        // NEW 2026 PARSING LOGIC: Extract labels
+        const companyMatch = bodyText.match(/Company:\s*(.*?)(?=Location:|Remote:|Type:|Salary:|$)/i);
+        const locationMatch = bodyText.match(/Location:\s*(.*?)(?=Remote:|Type:|Salary:|$)/i);
+        let name = companyMatch ? companyMatch[1].trim() : '';
+        let locationInfo = locationMatch ? locationMatch[1].trim() : 'Remote';
 
-        // Extracting name: usually [User] [Time] [Company Name]
-        let name = parts[0] || '';
-        
-        // Strip out the HN exact timestamp format or "2 hours ago" prefixes
-        name = name.replace(/^[a-zA-Z0-9_-]+\d{4}-\d{2}-\d{2}\s*/, '').trim();
-        name = name.replace(/^[a-zA-Z0-9_-]+\s+\d+\s+(hours?|days?|minutes?|months?)\s+ago\s*/i, '').trim();
-        
-        // Secondary pass for older formats
-        const nameMatch = name.match(/ago\s*(.*)$/) || name.match(/\d{4}-\d{2}-\d{2}\s*(.*)$/) || name.match(/]\s*(.*)$/);
-        name = nameMatch ? nameMatch[1].trim() : name;
-
-        // If the title is still just a URL (as reported by Subagent), extract the domain name
-        if (name.includes('http')) {
-            try {
-                const urlMatch = name.match(/https?:\/\/[^\s]+/);
-                if (urlMatch) {
-                   const urlObj = new URL(urlMatch[0]);
-                   name = urlObj.hostname.replace('www.', '').split('.')[0];
-                   name = name.charAt(0).toUpperCase() + name.slice(1);
-                }
-            } catch (e) {}
-        }
-
-        // Clean name if it's too long
-        if (name.length > 50) {
-            const words = name.split(/\s+/);
-            name = words.slice(-3).join(' '); // Take last few words as a guess
-        }
-
-        const role = parts[1] || 'Software Engineer';
-        let locationInfo = parts[2] || 'Remote';
-        
-        // Clean up location info if it's too long (overflows cards)
-        if (locationInfo.length > 35) {
-            const places = locationInfo.split(',').map(p => p.trim());
-            // If it's a list of cities, just take the first one or two and add "... "
-            if (places.length > 2) {
-                locationInfo = `${places[0]}, ${places[1]}...`;
-            } else {
-               locationInfo = locationInfo.substring(0, 32) + '...';
+        // Extract role: usually the first line after the metadata block
+        const lines = bodyText.split(/[\r\n]+/).map(l => l.trim()).filter(l => l.length > 0);
+        let role = 'Software Engineer';
+        for (const line of lines) {
+            if (!line.match(/^(Company|Location|Remote|Type|Salary):/i) && line !== userText) {
+                role = line.substring(0, 100); 
+                break;
             }
         }
-        
+
+        // Fallback for name if parsing failed
+        if (!name || name.length > 50) {
+            name = userText.split(/\s+/)[0] || 'Unknown Startup';
+        }
+
         // Find links
         const links = $(el).find('a').map((_, a) => $(a).attr('href')).get();
         
         // Find specifically "application here" or greenhouse/lever/workable links
         let careersUrl = links.find(l => 
-            l.includes('greenhouse.io') || 
-            l.includes('lever.co') || 
-            l.includes('workable.com') || 
-            l.includes('ashbyhq.com') ||
-            l.includes('apply') ||
-            l.includes('careers') ||
-            l.includes('jobs')
+            l && (
+              l.includes('greenhouse.io') || 
+              l.includes('lever.co') || 
+              l.includes('workable.com') || 
+              l.includes('ashbyhq.com') ||
+              l.includes('apply') ||
+              l.includes('careers') ||
+              l.includes('jobs')
+            )
         );
 
-        // Fallback to the last link which is often the specific job link in HN Hiring site
+        // Fallback to the last non-HN link
         if (!careersUrl && links.length > 0) {
-            careersUrl = links[links.length - 1];
+            careersUrl = links.find(l => l && !l.includes('news.ycombinator.com') && !l.includes('hnhiring.com'));
         }
 
-        const websiteUrl = links.find(l => l.includes('http') && !l.includes('news.ycombinator.com') && l !== careersUrl) || careersUrl;
+        const websiteUrl = links.find(l => l && l.includes('http') && !l.includes('news.ycombinator.com') && !l.includes('hnhiring.com') && l !== careersUrl) || careersUrl;
 
         if (name && name.length < 50 && name.length > 1) {
+          let shortDescription = bodyText.substring(0, 500) + '...';
           
-          let cleanText = fullText.replace(/^[a-zA-Z0-9_-]+\d{4}-\d{2}-\d{2}\s*/, '')
-                                  .replace(/^[a-zA-Z0-9_-]+\s+\d+\s+(hours?|days?|minutes?|months?)\s+ago\s*/i, '');
-          let shortDescription = cleanText.substring(0, 300) + '...';
-          
-          // DISABLED: Deep scrape if it's an ATS link to get richer AI context
-          // This saves Gemini tokens and prevents 403s on Render.
-          // if (careersUrl && (careersUrl.includes('greenhouse') || careersUrl.includes('lever') || careersUrl.includes('ashby') || careersUrl.includes('workable'))) {
-          //    shortDescription = await this.deepScrapeAtsLink(careersUrl, shortDescription);
-          // }
-
           const startup: CreateStartupDto = {
             name: name,
             websiteUrl: websiteUrl || '',
             careersUrl: careersUrl || '',
             shortDescription: shortDescription,
             industry: 'Tech',
-            location: locationInfo.split('|')[0].trim(),
+            location: locationInfo || 'Remote',
             hiringScore: 0,
             growthScore: 0,
             remoteScore: 0,
@@ -167,8 +133,7 @@ export class HnHiringScraper extends BaseScraper {
           const scored = this.generateScores(startup) as CreateStartupDto;
           jobs.push(scored);
           
-          // Prevent spamming the ATS sites too quickly
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
 
