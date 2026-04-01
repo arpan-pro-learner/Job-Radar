@@ -9,6 +9,7 @@ import { RefreshButton } from "@/components/startup/refresh-button";
 import Link from "next/link";
 
 async function getStartups(page: number = 1, search: string = "", source: string = "", locationFilter: string = "") {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001';
   try {
     const queryParams = new URLSearchParams({
       page: page.toString(),
@@ -18,7 +19,6 @@ async function getStartups(page: number = 1, search: string = "", source: string
       ...(locationFilter && { locationFilter }),
     });
     
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001';
     const res = await fetch(`${apiUrl}/startups?${queryParams.toString()}`, { cache: 'no-store' });
     if (!res.ok) {
        return { data: [], meta: { total: 0, page: 1, lastPage: 0 } };
@@ -242,8 +242,8 @@ export default async function Home({
 
         {startups.length > 0 ? (
           <div className="flex flex-col gap-4">
-            {startups.map((startup: any, index: number) => (
-              <div key={startup.id} className="animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: `${Math.min(index, 12) * 50}ms` }}>
+            {startups.map((startup: any) => (
+              <div key={startup.id} className="w-full">
                   <StartupCard startup={startup} />
               </div>
             ))}

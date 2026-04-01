@@ -54,32 +54,40 @@ export class HnHiringScraper extends BaseScraper {
       });
       const $ = cheerio.load(data);
       const jobs: CreateStartupDto[] = [];
-      const elements = $('li.job').toArray().slice(0, 30);
+      const elements = $('.job').toArray().slice(0, 40);
+      this.logger.log(`Found ${elements.length} job elements on the page.`);
 
       for (const el of elements) {
-        const bodyText = $(el).find('.container').text().trim();
+        const bodyTextRaw = $(el).find('.body').text().trim();
         const userText = $(el).find('.user').text().trim();
         const fullText = $(el).text();
         
         const lowerText = fullText.toLowerCase();
         
         // Skip items that don't look like engineering roles
-        const isEngineering = lowerText.includes('engineer') || lowerText.includes('developer') || lowerText.includes('software');
+        const isEngineering = lowerText.includes('engineer') || lowerText.includes('developer') || lowerText.includes('software') || lowerText.includes('fullstack') || lowerText.includes('backend') || lowerText.includes('frontend');
         if (!isEngineering) continue;
 
-        // NEW 2026 PARSING LOGIC: Extract labels
+        // NEW 2026 PARSING LOGIC: Extract labels from the cleaner bodyText
+        const bodyText = bodyTextRaw.replace(/\s+/g, ' '); // Clean whitespaces for regex
+        
         const companyMatch = bodyText.match(/Company:\s*(.*?)(?=Location:|Remote:|Type:|Salary:|$)/i);
         const locationMatch = bodyText.match(/Location:\s*(.*?)(?=Remote:|Type:|Salary:|$)/i);
+        
         let name = companyMatch ? companyMatch[1].trim() : '';
         let locationInfo = locationMatch ? locationMatch[1].trim() : 'Remote';
 
-        // Extract role: usually the first line after the metadata block
-        const lines = bodyText.split(/[\r\n]+/).map(l => l.trim()).filter(l => l.length > 0);
+        // Extract role: usually the first line after the metadata block if present
+        const lines = bodyTextRaw.split(/[\r\n]+/).map(l => l.trim()).filter(l => l.length > 0);
         let role = 'Software Engineer';
+        
+        // Look for the first line that isn't a metadata line
         for (const line of lines) {
             if (!line.match(/^(Company|Location|Remote|Type|Salary):/i) && line !== userText) {
-                role = line.substring(0, 100); 
-                break;
+                if (line.length > 5 && (line.toLowerCase().includes('engineer') || line.toLowerCase().includes('developer'))) {
+                    role = line.substring(0, 100); 
+                    break;
+                }
             }
         }
 
