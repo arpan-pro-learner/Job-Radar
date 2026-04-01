@@ -15,9 +15,11 @@ import { AiModule } from './ai/ai.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
+        const logger = new Logger('DatabaseModule');
         const dbType = configService.get<string>('DB_TYPE', 'postgres');
 
         if (dbType === 'sqlite') {
+          logger.log('Connecting to database using: SQLITE (local)');
           return {
             type: 'sqlite',
             database: 'database.sqlite',
@@ -28,20 +30,30 @@ import { AiModule } from './ai/ai.module';
 
         const dbUrl = configService.get<string>('DATABASE_URL');
         if (dbUrl) {
+          try {
+            const parsedUrl = new URL(dbUrl);
+            logger.log(`Connecting to database using: DATABASE_URL (host: ${parsedUrl.hostname})`);
+          } catch (e) {
+            logger.log('Connecting to database using: DATABASE_URL (unrollable URL format)');
+          }
+          
           return {
             type: 'postgres',
             url: dbUrl,
             autoLoadEntities: true,
-            synchronize: true, // Auto-migrating schema for now
+            synchronize: true,
             ssl: {
               rejectUnauthorized: false,
             },
           };
         }
 
+        const host = configService.get<string>('DB_HOST', 'localhost');
+        logger.log(`Connecting to database using: POSTGRES (host: ${host})`);
+        
         return {
           type: 'postgres',
-          host: configService.get<string>('DB_HOST', 'localhost'),
+          host: host,
           port: configService.get<number>('DB_PORT', 5432),
           username: configService.get<string>('DB_USERNAME', 'postgres'),
           password: configService.get<string>('DB_PASSWORD', 'postgres'),
