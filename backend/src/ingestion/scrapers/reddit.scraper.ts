@@ -11,13 +11,24 @@ export class RedditScraper extends BaseScraper {
     for (const sub of this.subreddits) {
       this.logger.log(`Fetching jobs from Reddit r/${sub}...`);
       try {
-        const { data } = await axios.get(`https://www.reddit.com/r/${sub}/new/.json?limit=25`, {
+        const response = await axios.get(`https://www.reddit.com/r/${sub}/new/.json?limit=25`, {
           headers: {
-            'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${Math.floor(Math.random() * 20) + 100}.0.0.0 Safari/537.36`,
-            'Accept': 'application/json, text/plain, */*',
-            'Accept-Language': 'en-US,en;q=0.5',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
           },
+          validateStatus: () => true
         });
+
+        this.logger.log(`Response status from Reddit r/${sub}: ${response.status}`);
+        if (response.status !== 200) {
+          this.logger.error(`Failed to fetch Reddit r/${sub}. Status: ${response.status}`);
+          continue;
+        }
+
+        const data = response.data;
 
         const posts = data.data.children;
         for (const post of posts) {
