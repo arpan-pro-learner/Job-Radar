@@ -1,4 +1,4 @@
-import { Controller, Post, HttpCode, HttpStatus, Logger } from '@nestjs/common';
+import { Controller, Post, Get, HttpCode, HttpStatus, Logger } from '@nestjs/common';
 import { IngestionService } from './ingestion.service';
 
 @Controller('ingestion')
@@ -21,5 +21,10 @@ export class IngestionController {
       status: 'started', 
       message: 'Ingestion pipeline running in background. New jobs will appear over the next few minutes.' 
     };
+  }
+
+  @Get('status')
+  async getStatus() {
+    return this.ingestionService.getStats();
   }
 }

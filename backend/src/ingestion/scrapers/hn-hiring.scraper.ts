@@ -6,32 +6,47 @@ import { CreateStartupDto } from '../../startups/dto/create-startup.dto';
 export class HnHiringScraper extends BaseScraper {
   private readonly url = 'https://hnhiring.com/locations/remote';
 
+  private readonly userAgents = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0',
+    'Mozilla/5.0 (AppleChromebook; MacOS; Macintosh; Chrome/121.0.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+  ];
+
+  private getRandomUserAgent(): string {
+    return this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
+  }
+
+  private getHeaders(): any {
+    return {
+      'User-Agent': this.getRandomUserAgent(),
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Cache-Control': 'max-age=0',
+      'Sec-Ch-Ua': '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
+      'Sec-Ch-Ua-Mobile': '?0',
+      'Sec-Ch-Ua-Platform': '"Windows"',
+      'Sec-Fetch-Dest': 'document',
+      'Sec-Fetch-Mode': 'navigate',
+      'Sec-Fetch-Site': 'none',
+      'Sec-Fetch-User': '?1',
+      'Upgrade-Insecure-Requests': '1',
+      'Referer': 'https://www.google.com/'
+    };
+  }
+
   private async deepScrapeAtsLink(url: string, fallbackText: string): Promise<string> {
     try {
       this.logger.log(`Deep scraping ATS link: ${url}`);
       const { data } = await axios.get(url, {
-        headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        },
+        headers: this.getHeaders(),
         timeout: 10000,
+        validateStatus: () => true 
       });
       const $ = cheerio.load(data);
       let extractedText = '';
-
-      if (url.includes('greenhouse.io') || url.includes('boards.greenhouse.io')) {
-        extractedText = $('#content').text() || $('.job-description').text() || $('div[id="content"]').text();
-      } else if (url.includes('lever.co')) {
-        extractedText = $('.posting-page').text() || $('.section').text() || $('.posting-requirements').text();
-      } else if (url.includes('workable.com')) {
-        extractedText = $('[data-ui="job-description"]').text() || $('.job-description').text();
-      } else if (url.includes('ashbyhq.com')) {
-        extractedText = $('.job-posting-content').text() || $('.ashby-job-description').text() || $('div[class*="JobPosting"]').text();
-      } else {
-        // Generic fallback
-        extractedText = $('main').text() || $('article').text() || $('body').text();
-      }
-
+// ... (rest of method)
       if (extractedText) {
         extractedText = extractedText.replace(/\s+/g, ' ').trim();
         return extractedText.length > 5000 ? extractedText.substring(0, 5000) + '...' : extractedText;
@@ -46,12 +61,18 @@ export class HnHiringScraper extends BaseScraper {
     this.logger.log(`Fetching jobs from ${this.url}...`);
 
     try {
-      const { data } = await axios.get(this.url, {
-        headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        },
+      const response = await axios.get(this.url, {
+        headers: this.getHeaders(),
+        validateStatus: () => true 
       });
+
+      this.logger.log(`Response status from HN Hiring: ${response.status}`);
+      if (response.status !== 200) {
+        this.logger.error(`Failed to fetch HN Hiring index page. Status: ${response.status}`);
+        return [];
+      }
+      
+      const data = response.data;
       const $ = cheerio.load(data);
       const jobs: CreateStartupDto[] = [];
       const elements = $('.job').toArray().slice(0, 40);

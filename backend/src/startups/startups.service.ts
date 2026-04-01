@@ -99,4 +99,12 @@ export class StartupsService {
     const result = await this.startupsRepository.delete({ source });
     return { deletedCount: result.affected };
   }
+
+  async countBySource(source: string): Promise<number> {
+    return this.startupsRepository.count({ where: { source: source as any } });
+  }
+
+  async countAll(): Promise<number> {
+    return this.startupsRepository.count();
+  }
 }

@@ -74,5 +74,23 @@ export class IngestionService {
   async scrapeAll() {
     return this.ingestAll();
   }
+
+  async getStats() {
+    const sources = ['HN Hiring', 'Reddit', 'Lets-Code'];
+    const stats: Record<string, number> = {};
+    
+    for (const source of sources) {
+        const count = await this.startupsService.countBySource(source);
+        stats[source] = count;
+    }
+    
+    const total = await this.startupsService.countAll();
+    
+    return {
+        total,
+        breakdown: stats,
+        timestamp: new Date().toISOString()
+    };
+  }
 }
 
