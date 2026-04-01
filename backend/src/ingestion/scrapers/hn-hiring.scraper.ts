@@ -76,7 +76,12 @@ export class HnHiringScraper extends BaseScraper {
       const $ = cheerio.load(data);
       const jobs: CreateStartupDto[] = [];
       const elements = $('.job').toArray().slice(0, 40);
+      
       this.logger.log(`Found ${elements.length} job elements on the page.`);
+      
+      if (elements.length === 0) {
+        this.logger.warn(`No jobs found on HN Hiring. HTML Preview (first 500 chars): ${data.substring(0, 500)}`);
+      }
 
       for (const el of elements) {
         const bodyTextRaw = $(el).find('.body').text().trim();
