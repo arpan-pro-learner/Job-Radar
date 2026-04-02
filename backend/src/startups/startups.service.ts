@@ -107,4 +107,15 @@ export class StartupsService {
   async countAll(): Promise<number> {
     return this.startupsRepository.count();
   }
+
+  async getRawSources(): Promise<{ source: string; count: number }[]> {
+    const result = await this.startupsRepository
+      .createQueryBuilder('startup')
+      .select('startup.source', 'source')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('startup.source')
+      .orderBy('count', 'DESC')
+      .getRawMany();
+    return result.map(r => ({ source: r.source, count: parseInt(r.count, 10) }));
+  }
 }

@@ -85,10 +85,12 @@ export class IngestionService {
     }
     
     const total = await this.startupsService.countAll();
+    const rawSources = await this.startupsService.getRawSources();
     
     return {
         total,
         breakdown: stats,
+        allSources: rawSources,
         timestamp: new Date().toISOString()
     };
   }
