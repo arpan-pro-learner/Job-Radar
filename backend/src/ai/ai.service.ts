@@ -14,7 +14,7 @@ export interface ScoredJob {
 export class AiService {
   private readonly logger = new Logger(AiService.name);
   private readonly apiKey: string | undefined;
-  private readonly apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
+  private readonly apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
   constructor(private readonly configService: ConfigService) {
     this.apiKey = this.configService.get<string>('GEMINI_API_KEY');
